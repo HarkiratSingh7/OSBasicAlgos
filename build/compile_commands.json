@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/home/honey/Projects/College/ProcessSchedulingAlgos/build/Demos/mainProgram",
-  "command": "/usr/bin/c++  -I/home/honey/Projects/College/ProcessSchedulingAlgos/ProcessSchAlgos/lib -g -o CMakeFiles/mainProgram.dir/main.cpp.o -c /home/honey/Projects/College/ProcessSchedulingAlgos/Demos/mainProgram/main.cpp",
-  "file": "/home/honey/Projects/College/ProcessSchedulingAlgos/Demos/mainProgram/main.cpp"
-}
-]

@@ -1,1 +1,0 @@
-/usr/bin/c++ -g -rdynamic CMakeFiles/mainProgram.dir/main.cpp.o -o mainProgram   -L/home/honey/Projects/College/ProcessSchedulingAlgos/ProcessSchedulingAlgos/src 
