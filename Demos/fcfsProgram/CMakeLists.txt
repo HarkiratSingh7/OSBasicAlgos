@@ -1,4 +1,4 @@
 include_directories(${ProcessSchedulingAlgos_SOURCE_DIR}/ProcessSchAlgos/lib)
 link_directories(${ProcessSchedulingAlgos_SOURCE_DIR}/ProcessSchedulingAlgos/src)
-add_executable(mainProgram main.cpp)
-target_link_libraries(mainProgram INTERFACE ProcessSchedulingAlgos)
+add_executable(fcfsProgram main.cpp)
+target_link_libraries(fcfsProgram INTERFACE ProcessSchedulingAlgos)

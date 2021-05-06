@@ -30,6 +30,7 @@ void runScheduler(std::deque<ProcessCharacteristics> readyQueue)
     vector<ProcessCharacteristics> ProcessRecords;
 
     unsigned int msTime {0};
+    double waitTime{0};
     while (!readyQueue.empty())
     {
         ProcessCharacteristics process = readyQueue.front();
@@ -37,6 +38,7 @@ void runScheduler(std::deque<ProcessCharacteristics> readyQueue)
 
         // Add waiting time 
         process.waitTime = msTime;
+        waitTime += process.waitTime;
         msTime += process.msBurstTime;
 
         // Add Turnaround Time - How much it took for the system to process it starting from 1st proc
@@ -50,5 +52,7 @@ void runScheduler(std::deque<ProcessCharacteristics> readyQueue)
     {
         cout << setw(INT_DISP_LENGTH) << process.id << setw(INT_DISP_LENGTH) << process.waitTime << setw(INT_DISP_LENGTH) << process.msBurstTime<<setw(INT_DISP_LENGTH)<<process.turnAroundTime<<"\n";
     }
+
+    cout << "The Average Waiting Time is " << waitTime / ProcessRecords.size() << '\n';
 }
 #endif // !FCFS_H
