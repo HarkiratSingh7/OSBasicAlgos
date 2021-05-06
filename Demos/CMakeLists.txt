@@ -1,1 +1,2 @@
-add_subdirectory(mainProgram)
+add_subdirectory(fcfsProgram)
+add_subdirectory(sjfsProgram)
