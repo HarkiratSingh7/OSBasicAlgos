@@ -1,0 +1,2 @@
+/usr/bin/ar qc libProcessSchedulingAlgos.a CMakeFiles/ProcessSchedulingAlgos.dir/ProcessSchedulingAlgos.cpp.o
+/usr/bin/ranlib libProcessSchedulingAlgos.a

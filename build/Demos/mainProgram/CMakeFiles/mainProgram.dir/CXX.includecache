@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../ProcessSchAlgos/lib/fcfs.h
+iostream
+-
+queue
+-
+iomanip
+-
+
+/home/honey/Projects/College/ProcessSchedulingAlgos/Demos/mainProgram/main.cpp
+iostream
+-
+fcfs.h
+/home/honey/Projects/College/ProcessSchedulingAlgos/Demos/mainProgram/fcfs.h
+
