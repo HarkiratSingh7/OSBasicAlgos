@@ -1,2 +1,2 @@
-include_directories(${ProcessSchedulingAlgos_SOURCE_DIR}/ProcessSchAlgos/lib)
-add_library(ProcessSchAlgos INTERFACE)
+include_directories(${OSBasicAlgos_SOURCE_DIR}/ProcessSchAlgos/lib)
+add_library(ProcSchAlgos INTERFACE)
