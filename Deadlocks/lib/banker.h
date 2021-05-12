@@ -33,8 +33,10 @@ public:
     {
     }
 
-    bool requestResource(int procId)
+    std::pair<std::vector<int>, bool> requestResource(int procId, std::vector<int> Requests_of_mSize, bool test = false)
     {
+        if (Requests_of_mSize.size() != m)
+            throw std::string("Invalid Request. Requests are not specified correctly");
         Process *Proc;
         for (auto &tmp : (Processes))
         {
@@ -46,14 +48,14 @@ public:
         }
         for (int id = 0; id < m; id++)
         {
-            if (Proc->need(id) < 0)
+            if (Proc->need(id) < Requests_of_mSize[id])
                 throw std::string("Exceeds maximum claim");
         }
 
         bool good = true;
         for (int id = 0; id < m; id++)
         {
-            if (Proc->need(id) <= Resources[id])
+            if (Requests_of_mSize[id] <= Resources[id])
                 continue;
             good = false;
             break;
@@ -65,25 +67,31 @@ public:
             auto CopyAllocs = Proc->allocated;
             for (int id = 0; id < m; id++)
             {
-                if (Proc->need(id) == 0)
+                if (Requests_of_mSize[id] == 0)
                     continue;
 
-                Resources[id] -= Proc->need(id);
-                Proc->allocated[id] += Proc->need(id);
+                Resources[id] -= Requests_of_mSize[id];
+                Proc->allocated[id] += Requests_of_mSize[id];
             }
-            // if (!isSafeState())
-            // {
-            //     Resources = CopyReses;
-            //     Proc->allocated = CopyAllocs;
-            //     return false;
-            // }
-            return true;
+            std::vector<int> Dummy;
+            if (!SafeStateMethod(Dummy))
+            {
+                Resources = CopyReses;
+                Proc->allocated = CopyAllocs;
+                return {Resources, false};
+            }
+            if (test)
+            {
+                Resources = CopyReses;
+                Proc->allocated = CopyAllocs;
+            }
+            return {Resources, true};
         }
 
-        return false;
+        return {Resources, false};
     }
 
-    bool SafeStateMethod(std::vector<int>& Sequence)
+    bool SafeStateMethod(std::vector<int> &Sequence)
     {
         auto Work = Resources;
         std::vector<bool> Finish(n, false);
