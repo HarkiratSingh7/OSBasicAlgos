@@ -39,6 +39,11 @@ void Pickup(int i)
 {
     states[i] = HUNGRY;
     test(i);
+
+    // Because monitor is constructed in a way that synch probs should not occur
+    // Therefore test can be run directly here otherwise it would be blocked and starvation 
+    // would occur. (Deadlock will form)
+
     // my_monitor.RunFunction([&]()
     //                        { test(i); });
     if (states[i] != EATING)
@@ -52,6 +57,9 @@ void PutDown(int i)
     states[i] = THINKING;
     test((i + TOTAL - 1) % TOTAL);
     test((i + 1) % TOTAL);
+    // Because monitor is constructed in a way that synch probs should not occur
+    // Therefore test can be run directly here otherwise it would be blocked and starvation 
+    // would occur. (Deadlock will form)
     // my_monitor.RunFunction([&]()
     //                        { test((i + TOTAL - 1) % TOTAL); });
 
@@ -100,7 +108,7 @@ int main()
 {
     // endl used to flush properly
 
-    cout << "Press Ctrl + C to terminate. Also execute from another console so that its output can be read after termination"<<endl;
+    cout << "Press C or c to terminate. Also execute from another console so that its output can be read after termination"<<endl;
     cout << "Press enter to start";
     getch();
 
@@ -133,7 +141,9 @@ int main()
 
         while (true)
         {
-            // Just press Ctrl + C to terminate
+            int c = getch();
+            if (c == 'c' || c == 'C')
+                break;
         }
     }
 
