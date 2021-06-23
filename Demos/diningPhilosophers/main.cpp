@@ -7,6 +7,8 @@
 #include <functional>
 #include "monitor.h"
 
+#include "conio.h"
+
 using namespace std;
 
 // Structures for the solution
@@ -96,6 +98,12 @@ void GenericPhilosopher(int i)
 
 int main()
 {
+    // endl used to flush properly
+
+    cout << "Press Ctrl + C to terminate. Also execute from another console so that its output can be read after termination"<<endl;
+    cout << "Press enter to start";
+    getch();
+
     for (auto &s : states)
         s = THINKING;
 
@@ -125,18 +133,7 @@ int main()
 
         while (true)
         {
-            string inp;
-            // cin >> inp;
-            if (inp == "exit")
-            {
-                break;
-            }
-            else
-            {
-                //     cout_mutex.lock();
-                //     cout << "Enter exit to exit the threads: ";
-                //     cout_mutex.unlock();
-            }
+            // Just press Ctrl + C to terminate
         }
     }
 
