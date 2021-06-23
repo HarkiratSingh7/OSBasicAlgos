@@ -135,10 +135,6 @@ int main()
         cout << "Size of thread pool is " << thread_pool.size() << endl;
         cout_mutex.unlock();
 
-        cout_mutex.lock();
-        cout << "Enter exit to exit the threads: " << endl;
-        cout_mutex.unlock();
-
         while (true)
         {
             int c = getch();
