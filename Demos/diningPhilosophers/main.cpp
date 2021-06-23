@@ -128,11 +128,11 @@ int main()
             cout_mutex.lock();
             cout << "Philosopher " << i + 1 << " has joined the dining table" << endl;
             cout_mutex.unlock();
-            thread_pool.push_back(thread(GenericPhilosopher, i));
+            thread_pool[i] = thread(GenericPhilosopher, i);
         }
 
         cout_mutex.lock();
-        cout << "Size of thread pool is " << TOTAL << endl;
+        cout << "Size of thread pool is " << thread_pool.size() << endl;
         cout_mutex.unlock();
 
         cout_mutex.lock();
