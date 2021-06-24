@@ -2,23 +2,76 @@
 #define MONITOR_H
 
 #include <functional>
-#include <mutex>
+#include <atomic>
+
+class Spinlock
+{
+public:
+    void lock()
+    {
+        while (_lock.exchange(true))
+            ;
+    }
+
+    void unlock()
+    {
+        _lock.exchange(false);
+    }
+
+private:
+    std::atomic<bool> _lock{false};
+};
+
+class Semaphore
+{
+public:
+    Semaphore(int init_count)
+        : counter(init_count)
+    {
+    }
+    void wait()
+    {
+        int run = 0;
+        while (!run)
+        {
+            inner_lock.lock();
+            if (counter > 0)
+            {
+                counter--;
+                run = 1;
+            }
+            inner_lock.unlock();
+        }
+    }
+
+    void signal()
+    {
+        inner_lock.lock();
+        counter++;
+        inner_lock.unlock();
+    }
+
+private:
+    Spinlock inner_lock;
+    int counter{0};
+};
 
 class Monitor
 {
 public:
     void RunFunction(std::function<void()> func)
     {
-        mmutex.lock();
+        mmutex.wait();
         func();
         if (suspended_count > 0)
-            next.unlock();
+            next.signal();
         else
-            mmutex.unlock();
+            mmutex.signal();
     }
 
 private:
-    std::mutex mmutex, next;
+    Semaphore mmutex {1};
+    Semaphore next{0};
     int suspended_count{0};
     friend class Condition;
 };
@@ -36,10 +89,10 @@ public:
     {
         ++count;
         if (mon->suspended_count > 0)
-            mon->next.unlock();
+            mon->next.signal();
         else
-            mon->mmutex.unlock();
-        lock.lock();
+            mon->mmutex.signal();
+        lock.wait();
         --count;
     }
 
@@ -48,14 +101,14 @@ public:
         if (count > 0)
         {
             ++mon->suspended_count;
-            lock.unlock();
-            mon->next.lock();
+            lock.signal();
+            mon->next.wait();
             --mon->suspended_count;
         }
     }
 
 private:
-    std::mutex lock;
+    Semaphore lock{0};
     int count{0};
     Monitor *mon;
 };
