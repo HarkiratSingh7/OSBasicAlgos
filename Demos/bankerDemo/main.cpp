@@ -56,7 +56,7 @@ void PrintProcessStateTable(const vector<Process> &Processes, int M, const vecto
 
 int main()
 {
-    ios::sync_with_stdio(false); // Useful, copy paste all at once
+    ios::sync_with_stdio(false); // Useful, copy paste whole input data at once for testing
 
     int m;
     cout << "Please enter types of Resources: ";
