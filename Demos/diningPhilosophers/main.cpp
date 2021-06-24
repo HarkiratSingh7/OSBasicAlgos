@@ -1,12 +1,11 @@
-// Dining Philosphers
+// Dining Philosphers Problem Solution
 #include <iostream>
 #include <vector>
-#include <mutex>
 #include <string>
 #include <thread>
 #include <functional>
 #include "monitor.h"
-
+#include <mutex>
 #include "conio.h"
 
 using namespace std;
@@ -22,15 +21,26 @@ enum
 } states[TOTAL];
 
 Monitor my_monitor;
-mutex cout_mutex;
-// vector<Condition> conditions(TOTAL, Condition(&my_monitor))
 Condition *conditions[TOTAL];
+Semaphore cout_lock{1};
+
+void CoutFunction(function<void()> cust_print)
+{
+    cout_lock.wait();
+    cust_print();
+    cout_lock.signal();
+}
 
 void test(int i)
 {
     if (states[i] == HUNGRY && states[(i + TOTAL - 1) % TOTAL] != EATING && states[(i + 1) % TOTAL] != EATING)
     {
         states[i] = EATING;
+        CoutFunction(
+            [&]()
+            {
+                cout << i + 1 << ": Eating...\n";
+            });
         conditions[i]->signal();
     }
 }
@@ -38,14 +48,12 @@ void test(int i)
 void Pickup(int i)
 {
     states[i] = HUNGRY;
+    CoutFunction(
+        [&]()
+        {
+            cout << i + 1 << ": Hungry and looking for chopsticks\n";
+        });
     test(i);
-
-    // Because monitor is constructed in a way that synch probs should not occur
-    // Therefore test can be run directly here otherwise it would be blocked and starvation 
-    // would occur. (Deadlock will form)
-
-    // my_monitor.RunFunction([&]()
-    //                        { test(i); });
     if (states[i] != EATING)
     {
         conditions[i]->wait();
@@ -55,61 +63,42 @@ void Pickup(int i)
 void PutDown(int i)
 {
     states[i] = THINKING;
+
+    CoutFunction(
+        [&]()
+        {
+            cout << i + 1 << ": chopsticks are down now\n";
+            cout << i + 1 << ": Thinking\n";
+        });
+
     test((i + TOTAL - 1) % TOTAL);
     test((i + 1) % TOTAL);
-    // Because monitor is constructed in a way that synch probs should not occur
-    // Therefore test can be run directly here otherwise it would be blocked and starvation 
-    // would occur. (Deadlock will form)
-    // my_monitor.RunFunction([&]()
-    //                        { test((i + TOTAL - 1) % TOTAL); });
-
-    // my_monitor.RunFunction([&]()
-    //                        { test((i + 1) % TOTAL); });
 }
 
 void GenericPhilosopher(int i)
 {
     while (true)
     {
-        cout_mutex.lock();
-        cout << i + 1 << ": Thinking..." << endl;
-        cout_mutex.unlock();
+        my_monitor.RunFunction(
+            [&]()
+            {
+                Pickup(i);
+            });
 
-        my_monitor.RunFunction([&]()
-                               {
-                                   cout_mutex.lock();
-                                   cout << i + 1 << ": looking for chopsticks\n";
-                                   cout_mutex.unlock();
-
-                                   Pickup(i);
-
-                                   cout_mutex.lock();
-                                   cout << i + 1 << ": eating...\n"
-                                        << endl;
-                                   cout_mutex.unlock();
-                               });
-        my_monitor.RunFunction([&]()
-                               {
-                                   cout_mutex.lock();
-                                   cout << i + 1 << ": going to put down the chopsticks\n"
-                                        << endl;
-                                   cout_mutex.unlock();
-
-                                   PutDown(i);
-
-                                   cout_mutex.lock();
-                                   cout << i + 1 << ": chopsticks are down now;" << endl;
-                                   cout_mutex.unlock();
-                               });
+        my_monitor.RunFunction(
+            [&]()
+            {
+                PutDown(i);
+            });
     }
 }
 
 int main()
 {
-    // endl used to flush properly
+    ios::sync_with_stdio(false), cout.tie(nullptr);
 
-    cout << "Press C or c to terminate. Also execute from another console so that its output can be read after termination"<<endl;
-    cout << "Press enter to start";
+    cout << "Press C or c to terminate. Also execute from another console so that its output can be read after termination" << endl;
+    cout << "Press enter to start" << endl;
     getch();
 
     for (auto &s : states)
@@ -123,17 +112,16 @@ int main()
     {
         vector<thread> thread_pool(TOTAL);
 
+        cout << "Size of thread pool is " << thread_pool.size() << endl;
         for (int i = 0; i < TOTAL; i++)
         {
-            cout_mutex.lock();
-            cout << "Philosopher " << i + 1 << " has joined the dining table" << endl;
-            cout_mutex.unlock();
+            CoutFunction(
+                [&]()
+                {
+                    cout << "Philosopher " << i + 1 << " has joined the dining table\n";
+                });
             thread_pool[i] = thread(GenericPhilosopher, i);
         }
-
-        cout_mutex.lock();
-        cout << "Size of thread pool is " << thread_pool.size() << endl;
-        cout_mutex.unlock();
 
         while (true)
         {
