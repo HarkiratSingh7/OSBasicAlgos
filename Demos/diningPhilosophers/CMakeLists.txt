@@ -1,4 +1,7 @@
 include_directories(${OSBasicAlgos_SOURCE_DIR}/Monitors/lib)
 link_directories(${OSBasicAlgos_SOURCE_DIR}/OSBasicAlgos/src)
 add_executable(diningPhilosophers main.cpp)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+target_link_libraries(diningPhilosophers PRIVATE Threads::Threads)
 target_link_libraries(diningPhilosophers INTERFACE MonitorsAlgos)

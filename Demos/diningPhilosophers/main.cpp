@@ -6,7 +6,6 @@
 #include <functional>
 #include "monitor.h"
 #include <mutex>
-#include "conio.h"
 
 using namespace std;
 
@@ -97,9 +96,9 @@ int main()
 {
     ios::sync_with_stdio(false), cout.tie(nullptr);
 
-    cout << "Press C or c to terminate. Also execute from another console so that its output can be read after termination" << endl;
+    cout << "Press C or c and then Enter to terminate. Also execute from another console so that its output can be read after termination" << endl;
     cout << "Press enter to start" << endl;
-    getch();
+    cin.get();
 
     for (auto &s : states)
         s = THINKING;
@@ -125,7 +124,8 @@ int main()
 
         while (true)
         {
-            int c = getch();
+            char c;
+            cin.get(c);
             if (c == 'c' || c == 'C')
                 break;
         }
